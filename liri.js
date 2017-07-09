@@ -3,6 +3,7 @@ var keys = require('./keys');
 var Twitter = require('twitter');
 var Spotify = require('node-spotify-api');
 var request = require('request');
+var fs = require('fs');
 
 //commands
 var command = process.argv[2];
@@ -91,35 +92,94 @@ function spotifySong() {
     }
 }
 
+var title;
+var year;
+var IMDBrating;
+var RotTomRating;
+var country;
+var language;
+var plot;
+var actors;
 
 function movieMaking() {
     if (specific == undefined) {
-        request('http://www.omdbapi.com/?i=tt3896198&&t=Mr.+Nobody&apikey=f159ce78', function(error, response, body) {
-            http: //www.omdbapi.com/?t=Mr.+Nobody
-                console.log('error:', error); // Print the error if one occurred 
-            console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received 
-            console.log('body:', body); // Print the HTML for the Google homepage. 
-        });
-    } else {}
+        request('http://www.omdbapi.com/?t=Mr.+Nobody&y=&plot=short&apikey=40e9cece', function(error, response, body) {
+            if (err) {
+                console.log('error:', error);
+                console.log('statusCode:', response && response.statusCode);
+            } else {
+                title = JSON.parse(body).Title;
+                year = JSON.parse(body).Year;
+                IMDBrating = JSON.parse(body).imdbRating;
+                RotTomRating = JSON.parse(body).Ratings[1].Value;
+                country = JSON.parse(body).Country;
+                language = JSON.parse(body).Language;
+                plot = JSON.parse(body).Plot;
+                actors = JSON.parse(body).Actors;
 
+                console.log('Title: ' + title);
+                console.log('Year: ' + year);
+                console.log('IMDB Rating: ' + IMDBrating);
+                console.log('Rotten Tomatoes: ' + RotTomRating);
+                console.log('Country: ' + country);
+                console.log('Language: ' + language);
+                console.log('Plot: ' + plot);
+                console.log('Actors: ' + actors);
+            }
+        });
+    } else {
+
+        request('http://www.omdbapi.com/?t=+' + specific + '&y=&plot=short&apikey=40e9cece', function(error, response, body) {
+            if (error) {
+                console.log('error:', error);
+                console.log('statusCode:', response && response.statusCode);
+            } else {
+                title = JSON.parse(body).Title;
+                year = JSON.parse(body).Year;
+                IMDBrating = JSON.parse(body).imdbRating;
+                RotTomRating = JSON.parse(body).Ratings[1].Value;
+                country = JSON.parse(body).Country;
+                language = JSON.parse(body).Language;
+                plot = JSON.parse(body).Plot;
+                actors = JSON.parse(body).Actors;
+
+                console.log('Title: ' + title);
+                console.log('Year: ' + year);
+                console.log('IMDB Rating: ' + IMDBrating);
+                console.log('Rotten Tomatoes: ' + RotTomRating);
+                console.log('Country: ' + country);
+                console.log('Language: ' + language);
+                console.log('Plot: ' + plot);
+                console.log('Actors: ' + actors);
+            }
+
+        });
+    }
 }
 
 function doThis() {
-    console.log("yes master");
+    fs.readFile("random.txt", "utf8", function(err, data) {
+        if (err) {
+            return console.log(err);
+        }
+        console.log(data);
+        var dataArr = data.split(",");
+        command = dataArr[0];
+        specific = dataArr[1];
+        spotifySong();
+
+    });
+
 }
 
 
 //run app
 if (command == "my-tweets") {
-    console.log("tweets working");
     getTweets();
 } else if (command == "spotify-this-song") {
-    console.log("spotify working");
     spotifySong();
 } else if (command == "movie-this") {
-    console.log("movies working");
     movieMaking();
 } else if (command == "do-what-it-says") {
-    console.log("do this working");
     doThis();
 }

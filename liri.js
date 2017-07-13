@@ -104,7 +104,7 @@ var actors;
 function movieMaking() {
     if (specific == undefined) {
         request('http://www.omdbapi.com/?t=Mr.+Nobody&y=&plot=short&apikey=40e9cece', function(error, response, body) {
-            if (err) {
+            if (error) {
                 console.log('error:', error);
                 console.log('statusCode:', response && response.statusCode);
             } else {
